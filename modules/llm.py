@@ -21,13 +21,10 @@ def detect_gpu():
     try:
         import torch
         if torch.cuda.is_available():
-            gpu_name = torch.cuda.get_device_name(0)
-            gpu_count = torch.cuda.device_count()
-            logger.info(f"[GPU] Detectada: {gpu_name}")
-            logger.info(f"[GPU] Quantidade: {gpu_count}")
+            logger.info("[GPU] GPU NVIDIA detectada")
             return True
     except ImportError:
-        logger.debug("PyTorch não instalado, verificando alternativas...")
+        logger.debug("PyTorch nao instalado, verificando alternativas...")
     
     # Verificar via nvidia-smi (método alternativo)
     try:
