@@ -6,17 +6,17 @@ color 0A
 :MENU
 cls
 echo.
-echo ╔═══════════════════════════════════════════════════════════╗
-echo ║                                                           ║
-echo ║              🔮  SISTEMA ORÁCULO  🔮                      ║
-echo ║                                                           ║
-echo ║         Agente de IA Local para Consulta de               ║
-echo ║              Documentos Empresariais                      ║
-echo ║                                                           ║
-echo ╚═══════════════════════════════════════════════════════════╝
+echo ===============================================================
+echo.
+echo                    SISTEMA ORACULO
+echo.
+echo             Agente de IA Local para Consulta de
+echo                  Documentos Empresariais
+echo.
+echo ===============================================================
 echo.
 echo ═══════════════════════════════════════════════════════════
-echo               MENU PRINCIPAL
+echo                        MENU PRINCIPAL
 echo ═══════════════════════════════════════════════════════════
 echo.
 echo   1 - Instalar Ambiente Virtual Python (venv)
@@ -31,7 +31,7 @@ if "%opcao%"=="1" goto INSTALAR
 if "%opcao%"=="2" goto EXECUTAR
 if "%opcao%"=="3" goto SAIR
 echo.
-echo ❌ Opção inválida! Tente novamente.
+echo ❌ Opcao invalida! Tente novamente.
 timeout /t 2 >nul
 goto MENU
 
@@ -39,14 +39,14 @@ goto MENU
 cls
 echo.
 echo ═══════════════════════════════════════════════════════════
-echo    INSTALANDO AMBIENTE VIRTUAL PYTHON
+echo            INSTALANDO AMBIENTE VIRTUAL PYTHON
 echo ═══════════════════════════════════════════════════════════
 echo.
 
 REM Verificar se Python está instalado
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo ❌ Python não encontrado!
+    echo [ERRO] Python nao encontrado!
     echo.
     echo Por favor, instale Python 3.8 ou superior:
     echo https://www.python.org/downloads/
@@ -55,7 +55,7 @@ if errorlevel 1 (
     goto MENU
 )
 
-echo ✅ Python encontrado:
+echo [OK] Python encontrado:
 python --version
 echo.
 
@@ -69,9 +69,9 @@ for /f "tokens=1,2 delims=." %%a in ("%PYTHON_VERSION%") do (
 if %PYTHON_MAJOR% GEQ 3 (
     if %PYTHON_MINOR% GTR 13 (
         echo.
-        echo ⚠️  ATENÇÃO: Python %PYTHON_VERSION% é muito recente!
+        echo [AVISO] Python %PYTHON_VERSION% e muito recente!
         echo.
-        echo Algumas bibliotecas podem não ter suporte completo ainda.
+        echo Algumas bibliotecas podem nao ter suporte completo ainda.
         echo Recomendado: Python 3.9, 3.10, 3.11, 3.12 ou 3.13
         echo.
         echo Se tiver problemas na instalação:
@@ -87,51 +87,51 @@ echo.
 
 REM Verificar se venv já existe
 if exist "venv\" (
-    echo ⚠️  Ambiente virtual já existe!
+    echo [AVISO] Ambiente virtual ja existe!
     echo.
     set /p recriar="Deseja recriar o ambiente? (s/n): "
     if /i not "%recriar%"=="s" (
         echo.
-        echo ℹ️  Mantendo ambiente existente.
+        echo [INFO] Mantendo ambiente existente.
         timeout /t 2 >nul
         goto MENU
     )
     echo.
-    echo 🗑️  Removendo ambiente antigo...
+    echo [INFO] Removendo ambiente antigo...
     rmdir /s /q venv
 )
 
 echo.
-echo 📦 Criando ambiente virtual...
+echo [INFO] Criando ambiente virtual...
 python -m venv venv
 if errorlevel 1 (
     echo.
-    echo ❌ Erro ao criar ambiente virtual!
+    echo [ERRO] Erro ao criar ambiente virtual!
     pause
     goto MENU
 )
 
-echo ✅ Ambiente virtual criado com sucesso!
+echo [OK] Ambiente virtual criado com sucesso!
 echo.
-echo 🔧 Ativando ambiente virtual...
+echo [INFO] Ativando ambiente virtual...
 call venv\Scripts\activate.bat
 if errorlevel 1 (
     echo.
-    echo ❌ Erro ao ativar ambiente virtual!
+    echo [ERRO] Erro ao ativar ambiente virtual!
     pause
     goto MENU
 )
 
-echo ✅ Ambiente virtual ativado!
+echo [OK] Ambiente virtual ativado!
 echo.
-echo 📥 Atualizando pip...
+echo [INFO] Atualizando pip...
 python -m pip install --upgrade pip --quiet
-echo ✅ Pip atualizado!
+echo [OK] Pip atualizado!
 echo.
 
 REM Verificar se requirements.txt existe
 if not exist "requirements.txt" (
-    echo ⚠️  Arquivo requirements.txt não encontrado!
+    echo [AVISO] Arquivo requirements.txt nao encontrado!
     echo.
     echo Criando requirements.txt...
     (
@@ -150,53 +150,36 @@ if not exist "requirements.txt" (
         echo # LLM Local ^(opcional - pode falhar, sistema funciona sem ele^)
         echo llama-cpp-python^>=0.2.0
     ) > requirements.txt
-    echo ✅ requirements.txt criado!
+    echo [OK] requirements.txt criado!
     echo.
 )
 
-echo 📦 Instalando dependências (isso pode demorar alguns minutos)...
+echo [INFO] Instalando dependencias do requirements.txt...
+echo    (isso pode demorar alguns minutos)
 echo.
-echo ℹ️  Instalando em ordem para evitar conflitos...
-echo.
 
-REM Instalar numpy primeiro (pre-built wheel)
-echo [1/5] Instalando numpy...
-pip install numpy --only-binary :all: -q
+REM Instalar todas as dependências do requirements.txt
+pip install -r requirements.txt
+
 if errorlevel 1 (
-    echo ⚠️  Falha ao instalar numpy pre-compilado
-    pip install numpy -q
-)
-
-REM Instalar leitores de documentos
-echo [2/5] Instalando leitores de documentos...
-pip install PyPDF2 python-docx openpyxl -q
-
-REM Instalar sentence-transformers e chromadb
-echo [3/5] Instalando IA e embeddings...
-pip install sentence-transformers -q
-echo [4/5] Instalando ChromaDB...
-pip install chromadb -q
-
-REM Instalar GPT4All (LLM recomendado - 100%% Python)
-echo [5/5] Instalando GPT4All (LLM)...
-pip install gpt4all -q
-if errorlevel 1 (
-    echo ⚠️  Erro ao instalar GPT4All
+    echo.
+    echo [AVISO] Alguns pacotes podem ter falhado, mas o sistema pode funcionar
+    echo.
 ) else (
-    echo ✅ GPT4All instalado! Sistema funcionará com LLM completo
+    echo.
+    echo [OK] Todas as dependencias instaladas com sucesso!
+    echo.
 )
 
 echo.
-
+echo ===============================================================
 echo.
-echo ╔═══════════════════════════════════════════════════════════╗
-echo ║                                                           ║
-echo ║          ✅ INSTALAÇÃO CONCLUÍDA COM SUCESSO!            ║
-echo ║                                                           ║
-echo ║  Todas as dependências foram instaladas.                 ║
-echo ║  Você já pode executar o Sistema Oráculo!                ║
-echo ║                                                           ║
-echo ╚═══════════════════════════════════════════════════════════╝
+echo               INSTALACAO CONCLUIDA COM SUCESSO
+echo.
+echo            Todas as dependencias foram instaladas.
+echo            Voce ja pode executar o Sistema Oraculo!
+echo.
+echo ===============================================================
 echo.
 pause
 goto MENU
@@ -205,15 +188,15 @@ goto MENU
 cls
 echo.
 echo ═══════════════════════════════════════════════════════════
-echo    EXECUTANDO SISTEMA ORÁCULO
+echo                EXECUTANDO SISTEMA ORÁCULO
 echo ═══════════════════════════════════════════════════════════
 echo.
 
 REM Verificar se venv existe
 if not exist "venv\" (
-    echo ❌ Ambiente virtual não encontrado!
+    echo [ERRO] Ambiente virtual nao encontrado!
     echo.
-    echo Por favor, execute a opção 1 primeiro para instalar o ambiente.
+    echo Por favor, execute a opcao 1 primeiro para instalar o ambiente.
     echo.
     pause
     goto MENU
@@ -221,7 +204,7 @@ if not exist "venv\" (
 
 REM Verificar se index.py existe
 if not exist "index.py" (
-    echo ❌ Arquivo index.py não encontrado!
+    echo [ERRO] Arquivo index.py nao encontrado!
     echo.
     echo Certifique-se de estar na pasta correta do projeto.
     echo.
@@ -231,33 +214,33 @@ if not exist "index.py" (
 
 REM Verificar se pasta training existe
 if not exist "training\" (
-    echo ⚠️  Pasta 'training' não encontrada!
+    echo [AVISO] Pasta 'training' nao encontrada!
     echo.
     echo Criando pasta training...
     mkdir training
-    echo ✅ Pasta criada!
+    echo [OK] Pasta criada!
     echo.
-    echo ℹ️  Adicione seus documentos (PDF, DOCX, Excel) na pasta 'training'
-    echo    antes de indexar os documentos no sistema.
+    echo [INFO] Adicione seus documentos (PDF, DOCX, Excel) na pasta 'training'
+    echo        antes de indexar os documentos no sistema.
     echo.
     timeout /t 3 >nul
 )
 
-echo 🔄 Ativando ambiente virtual...
+echo [INFO] Ativando ambiente virtual...
 call venv\Scripts\activate.bat
 if errorlevel 1 (
     echo.
-    echo ❌ Erro ao ativar ambiente virtual!
+    echo [ERRO] Erro ao ativar ambiente virtual!
     echo.
-    echo Tente reinstalar o ambiente (opção 1).
+    echo Tente reinstalar o ambiente (opcao 1).
     echo.
     pause
     goto MENU
 )
 
-echo ✅ Ambiente virtual ativado!
+echo [OK] Ambiente virtual ativado!
 echo.
-echo 🚀 Iniciando Sistema Oráculo...
+echo [INFO] Iniciando Sistema Oraculo...
 echo.
 echo ═══════════════════════════════════════════════════════════
 echo.
@@ -268,7 +251,7 @@ python index.py
 echo.
 echo.
 echo ═══════════════════════════════════════════════════════════
-echo    Sistema Oráculo Encerrado
+echo                  Sistema Oráculo Encerrado
 echo ═══════════════════════════════════════════════════════════
 echo.
 pause
@@ -277,13 +260,13 @@ goto MENU
 :SAIR
 cls
 echo.
-echo ╔═══════════════════════════════════════════════════════════╗
-echo ║                                                           ║
-echo ║              👋 Até logo!                                ║
-echo ║                                                           ║
-echo ║         Obrigado por usar o Sistema Oráculo!             ║
-echo ║                                                           ║
-echo ╚═══════════════════════════════════════════════════════════╝
+echo ===============================================================
+echo.
+echo                       Ate logo!
+echo.
+echo            Obrigado por usar o Sistema Oraculo!
+echo.
+echo ===============================================================
 echo.
 timeout /t 2 >nul
 exit /b 0
