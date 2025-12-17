@@ -338,7 +338,20 @@ class GPT4AllLLM:
                     top_p=0.9  # Nucleus sampling
                 )
             
-            return response.strip()
+            # Limpar resposta - remover prompt se estiver presente
+            cleaned_response = response.strip()
+            
+            # Se a resposta contém o prompt, extrair apenas a parte após "RESPOSTA:"
+            if "RESPOSTA:" in cleaned_response:
+                parts = cleaned_response.split("RESPOSTA:", 1)
+                if len(parts) > 1:
+                    cleaned_response = parts[1].strip()
+            
+            # Remover possíveis tags ou marcadores residuais
+            if cleaned_response.startswith("..."):
+                cleaned_response = cleaned_response[3:].strip()
+            
+            return cleaned_response
             
         except Exception as e:
             logger.error(f"Erro ao gerar resposta: {str(e)}")
@@ -380,33 +393,15 @@ class GPT4AllLLM:
         
         context = "\n\n".join(context_parts)
         
-        # Template otimizado com instruções RIGOROSAS
-        prompt = f"""Você é um assistente técnico PRECISO. Sua função é responder baseado EXCLUSIVAMENTE no documento fornecido.
+        # Template otimizado e mais limpo
+        prompt = f"""Baseado no documento abaixo, responda a pergunta de forma objetiva e precisa.
 
 DOCUMENTO:
 {context}
 
-INSTRUÇÕES CRÍTICAS:
-1. Leia o documento COM ATENÇÃO antes de responder
-2. Use APENAS informações EXPLÍCITAS do documento
-3. NUNCA invente, interprete ou assuma informações que não estão escritas
-4. CITE trechos literais do documento usando aspas quando possível
-5. Se o documento contradiz a premissa da pergunta, CORRIJA o usuário
-6. Seja ESPECÍFICO: mencione itens, números, requisitos exatos
+PERGUNTA: {question}
 
-EXEMPLOS DO QUE NÃO FAZER:
-❌ "Sim, está correto" (quando o documento diz o contrário)
-❌ "Ajuda a garantir isolamento" (se o documento não menciona isso)
-❌ Confirmar práticas que o documento não valida
-
-EXEMPLO DO QUE FAZER:
-✓ "Não, segundo o item 4 do documento: '[citação literal]'"
-✓ "O documento especifica que deve-se..."
-✓ "Sua abordagem difere do recomendado. O documento indica..."
-
-Pergunta: {question}
-
-Resposta (seja PRECISO e LITERAL):"""
+RESPOSTA:"""
         
         return prompt
 

@@ -197,12 +197,170 @@ python index.py
 - 💼 Compliance e políticas internas
 - 🎓 Material de treinamento
 
+## 🌐 API REST
+
+O sistema pode ser executado como servidor API REST para integração com outros serviços.
+
+### Iniciar Servidor API
+
+No menu principal, escolha:
+```
+[10] Iniciar servidor API REST
+```
+
+Ou configure manualmente:
+- **Host padrão**: 127.0.0.1
+- **Porta padrão**: 5000
+
+### Endpoints Disponíveis
+
+#### 1. Health Check
+```bash
+GET http://localhost:5000/health
+```
+
+**Resposta:**
+```json
+{
+  "status": "online",
+  "service": "Sistema Oraculo API",
+  "version": "1.0.0"
+}
+```
+
+#### 2. Consultar Sistema
+```bash
+POST http://localhost:5000/query
+Content-Type: application/json
+
+{
+  "question": "Qual o objetivo do desenvolvimento seguro?",
+  "n_results": 5,
+  "show_sources": false
+}
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "question": "Qual o objetivo do desenvolvimento seguro?",
+  "response": "O objetivo do desenvolvimento seguro é..."
+}
+```
+
+**Com fontes:**
+```json
+{
+  "question": "...",
+  "n_results": 5,
+  "show_sources": true
+}
+```
+
+**Resposta com fontes:**
+```json
+{
+  "success": true,
+  "question": "...",
+  "response": "...",
+  "sources": [
+    {
+      "filename": "desenvolvimento_seguro.pdf",
+      "text": "Trecho do documento..."
+    }
+  ]
+}
+```
+
+#### 3. Estatísticas do Sistema
+```bash
+GET http://localhost:5000/stats
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "stats": {
+    "total_documents": 103,
+    "collection_name": "oraculo_docs"
+  }
+}
+```
+
+#### 4. Reindexar Documentos
+```bash
+POST http://localhost:5000/index
+Content-Type: application/json
+
+{
+  "force_reindex": true
+}
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "message": "Indexação concluída",
+  "stats": {
+    "total_documents": 103
+  }
+}
+```
+
+### Exemplo de Uso (Python)
+
+```python
+import requests
+
+# Fazer consulta
+response = requests.post('http://localhost:5000/query', json={
+    "question": "O que é desenvolvimento seguro?",
+    "n_results": 5
+})
+
+result = response.json()
+print(result['response'])
+```
+
+### Exemplo de Uso (cURL)
+
+```bash
+# Consulta simples
+curl -X POST http://localhost:5000/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "O que é desenvolvimento seguro?"}'
+
+# Consulta com fontes
+curl -X POST http://localhost:5000/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Explique OWASP Top 10", "show_sources": true}'
+
+# Health check
+curl http://localhost:5000/health
+
+# Estatísticas
+curl http://localhost:5000/stats
+```
+
+### Integração com Outras Aplicações
+
+A API REST permite que o Sistema Oráculo seja usado como backend para:
+- 🌐 Aplicações web
+- 📱 Aplicativos mobile
+- 🤖 Chatbots
+- 🔗 Sistemas corporativos
+- 📊 Dashboards analíticos
+
 ## 🔐 Privacidade e Segurança
 
-- ✅ **Totalmente Offline**: Seus dados nunca saem da máquina
+- ✅ **Totalmente Offline**: Seus dados nunca saem da máquina (exceto se você expor a API externamente)
 - ✅ **Sem APIs Externas**: Nenhuma conexão externa necessária
 - ✅ **Dados Locais**: Tudo armazenado localmente
 - ✅ **Open Source**: Código auditável
+- ⚠️ **API Local**: Por padrão, a API só aceita conexões locais (127.0.0.1)
 
 ## 🐛 Solução de Problemas
 
@@ -251,12 +409,16 @@ logs/
 
 Este é um sistema profissional e extensível. Áreas para melhorias:
 
-- [ ] Suporte a mais formatos (TXT, MD, CSV)
+- [x] ✅ Suporte a API REST para integração
 - [ ] Interface web com Flask/FastAPI
+- [ ] Suporte a mais formatos (TXT, MD, CSV)
 - [ ] Processamento de imagens em PDFs (OCR)
 - [ ] Cache de embeddings
 - [ ] Suporte a múltiplos idiomas de prompt
 - [ ] Exportação de conversas
+- [ ] Autenticação JWT para API
+- [ ] Rate limiting para API
+- [ ] WebSockets para streaming de respostas
 
 ## 📄 Licença
 

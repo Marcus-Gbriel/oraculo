@@ -125,7 +125,10 @@ def show_menu():
     [7] Visualizar detalhes de modelo
     [8] Selecionar modelo ativo
     
-    [9] Encerrar sistema
+    SERVIDOR API:
+    [10] Iniciar servidor API REST
+    
+    [0] Encerrar sistema
     
     ===============================================================
     """
@@ -249,8 +252,39 @@ def main():
                     else:
                         print("[ERRO] Numero invalido!")
                 input("\n[INFO] Pressione Enter para continuar...")
+            
+            elif choice == '10':
+                # Iniciar servidor API REST
+                try:
+                    from modules.api_server import OracleAPI
+                    
+                    print("\n" + "="*63)
+                    print("           SERVIDOR API REST")
+                    print("="*63)
+                    print("\n[API] Configuracao do servidor:")
+                    
+                    host = input("[API] Host (Enter para 127.0.0.1): ").strip() or "127.0.0.1"
+                    port_input = input("[API] Porta (Enter para 5000): ").strip()
+                    port = int(port_input) if port_input.isdigit() else 5000
+                    
+                    print(f"\n[API] Iniciando servidor em http://{host}:{port}")
+                    print("[API] Pressione Ctrl+C para encerrar o servidor\n")
+                    
+                    api = OracleAPI(oracle, host=host, port=port)
+                    api.run(debug=False)
+                    
+                except KeyboardInterrupt:
+                    print("\n\n[API] Servidor encerrado")
+                except ImportError:
+                    print("\n[ERRO] Flask nao esta instalado!")
+                    print("[INFO] Instale com: pip install flask")
+                except Exception as e:
+                    print(f"\n[ERRO] Erro ao iniciar servidor: {str(e)}")
+                    logger.error(f"[API] Erro: {str(e)}")
                 
-            elif choice == '9':
+                input("\n[INFO] Pressione Enter para continuar...")
+                
+            elif choice == '0' or choice == '9':
                 print("\n[SISTEMA] Encerrando Sistema Oraculo. Ate logo!")
                 break
                 

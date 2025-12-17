@@ -15,3 +15,5 @@ gpt4all>=2.0.0
 
 # LLM Local alternativo (opcional - requer compilador C++)
 # llama-cpp-python>=0.2.0
+
+flask>=2.3.0
