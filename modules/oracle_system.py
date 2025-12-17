@@ -165,10 +165,10 @@ class OracleSystem:
         # Verificar se há documentos indexados
         stats = self.vector_store.get_collection_stats()
         if stats.get('total_documents', 0) == 0:
-            return "❌ Nenhum documento indexado. Execute index_documents() primeiro."
+            return "[ERRO] Nenhum documento indexado. Execute index_documents() primeiro."
         
         # Mensagem visual para o usuário (não é log)
-        print("🔍 Buscando informações relevantes...", end='', flush=True)
+        print("[SISTEMA] Buscando informacoes relevantes...", end='', flush=True)
         
         # Gerar embedding da pergunta
         logger.info("Buscando documentos relevantes...")
@@ -179,10 +179,10 @@ class OracleSystem:
         
         if not relevant_docs:
             print("\r" + " "*50 + "\r", end='')  # Limpar linha
-            return "❌ Não encontrei documentos relevantes para sua pergunta."
+            return "[ERRO] Nao encontrei documentos relevantes para sua pergunta."
         
         print("\r" + " "*50 + "\r", end='')  # Limpar linha
-        print("🧠 Analisando e gerando resposta...", end='', flush=True)
+        print("[SISTEMA] Analisando e gerando resposta...", end='', flush=True)
         
         # Criar prompt com contexto
         prompt = self.llm.create_prompt_with_context(question, relevant_docs)
@@ -198,12 +198,12 @@ class OracleSystem:
         
         # Adicionar fontes se solicitado
         if show_sources:
-            sources = "\n\n📚 Fontes consultadas:\n"
+            sources = "\n\n[FONTES CONSULTADAS]\n"
             seen_files = set()
             for doc in relevant_docs:
                 filename = doc.get('metadata', {}).get('filename', 'Desconhecido')
                 if filename not in seen_files:
-                    sources += f"  • {filename}\n"
+                    sources += f"  - {filename}\n"
                     seen_files.add(filename)
             response += sources
         
@@ -220,17 +220,23 @@ class OracleSystem:
         Modo interativo de perguntas e respostas
         """
         logger.info("\n" + "="*50)
-        logger.info("MODO INTERATIVO DO ORÁCULO")
+        logger.info("MODO INTERATIVO DO ORACULO")
         logger.info("="*50)
         logger.info("Digite suas perguntas (ou 'sair' para encerrar)\n")
         
+        print("\n" + "="*63)
+        print("               MODO INTERATIVO - SISTEMA ORACULO")
+        print("="*63)
+        print("  Digite suas perguntas. Para sair: 'sair', 'exit' ou 'q'")
+        print("="*63)
+        
         while True:
             try:
-                question = input("\n🔮 Sua pergunta: ").strip()
+                question = input("\n[CONSULTA] Sua pergunta: ").strip()
                 
                 if question.lower() in ['sair', 'exit', 'quit', 'q']:
-                    logger.info("\nEncerrando Oráculo. Até logo!")
-                    print("\n👋 Encerrando Oráculo. Até logo!\n")
+                    logger.info("\nEncerrando Oraculo. Ate logo!")
+                    print("\n[SISTEMA] Encerrando modo interativo. Ate logo!\n")
                     break
                 
                 if not question:
@@ -242,13 +248,15 @@ class OracleSystem:
                 logger.info(f"\n[{timestamp}] Nova pergunta recebida")
                 
                 response = self.query(question)
-                print(f"\n💡 Resposta:\n{response}")
+                print(f"\n[RESPOSTA]\n{response}")
                 
             except KeyboardInterrupt:
-                logger.info("\n\nEncerrando Oráculo. Até logo!")
+                logger.info("\n\nEncerrando Oraculo. Ate logo!")
+                print("\n[SISTEMA] Sistema interrompido.\n")
                 break
             except Exception as e:
                 logger.error(f"Erro: {str(e)}")
+                print(f"[ERRO] {str(e)}")
     
     def get_stats(self) -> Dict:
         """

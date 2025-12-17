@@ -154,26 +154,26 @@ class ModelManager:
             model_file: Nome do arquivo do modelo
         """
         if model_file not in self.AVAILABLE_MODELS:
-            print(f"❌ Modelo '{model_file}' não encontrado")
+            print(f"[ERRO] Modelo '{model_file}' nao encontrado")
             return
         
         info = self.AVAILABLE_MODELS[model_file]
         is_installed = (self.models_dir / model_file).exists()
         is_selected = (model_file == self.get_selected_model())
         
-        print(f"\n{'='*60}")
-        print(f"📦 {info['name']}")
-        print(f"{'='*60}")
+        print(f"\n{'='*63}")
+        print(f"  {info['name']}")
+        print(f"{'='*63}")
         print(f"   Arquivo:     {model_file}")
         print(f"   Tamanho:     {info['size']}")
         print(f"   Qualidade:   {info['quality']}")
         print(f"   Velocidade:  {info['speed']}")
-        print(f"   Descrição:   {info['description']}")
+        print(f"   Descricao:   {info['description']}")
         print(f"   Melhor para: {info['best_for']}")
-        print(f"   Status:      {'✅ Instalado' if is_installed else '❌ Não instalado'}")
+        print(f"   Status:      {'[INSTALADO]' if is_installed else '[NAO INSTALADO]'}")
         if is_selected:
-            print(f"   {'⭐ MODELO ATIVO' }")
-        print(f"{'='*60}\n")
+            print(f"   {'[MODELO ATIVO]' }")
+        print(f"{'='*63}\n")
     
     def print_all_models(self):
         """Imprime tabela com todos os modelos disponíveis"""
@@ -181,7 +181,7 @@ class ModelManager:
         selected = self.get_selected_model()
         
         print("\n" + "="*90)
-        print(" "*30 + "📚 MODELOS DISPONÍVEIS")
+        print(" "*25 + "MODELOS LLM DISPONIVEIS")
         print("="*90)
         print(f"{'#':<4} {'Nome':<30} {'Tamanho':<10} {'Qualidade':<12} {'Status':<15}")
         print("-"*90)
@@ -192,17 +192,17 @@ class ModelManager:
             
             status = ""
             if is_selected:
-                status = "⭐ ATIVO"
+                status = "[ATIVO]"
             elif is_installed:
-                status = "✅ Instalado"
+                status = "[INSTALADO]"
             else:
-                status = "❌ Não instalado"
+                status = "[NAO INSTALADO]"
             
             print(f"{idx:<4} {info['name']:<30} {info['size']:<10} {info['quality']:<12} {status:<15}")
         
         print("="*90)
-        print(f"\n💾 Modelos instalados: {len(installed)}/{len(self.AVAILABLE_MODELS)}")
-        print(f"⭐ Modelo ativo: {self.AVAILABLE_MODELS[selected]['name']}\n")
+        print(f"\n  Modelos instalados: {len(installed)}/{len(self.AVAILABLE_MODELS)}")
+        print(f"  Modelo ativo: {self.AVAILABLE_MODELS[selected]['name']}\n")
     
     def download_model(self, model_file: str) -> bool:
         """
@@ -215,17 +215,17 @@ class ModelManager:
             True se já instalado ou False se precisa instalar
         """
         if model_file not in self.AVAILABLE_MODELS:
-            print(f"❌ Modelo '{model_file}' não está na lista de modelos disponíveis")
+            print(f"[ERRO] Modelo '{model_file}' nao esta na lista de modelos disponiveis")
             return False
         
         if (self.models_dir / model_file).exists():
-            print(f"✅ Modelo '{model_file}' já está instalado")
+            print(f"[INFO] Modelo '{model_file}' ja esta instalado")
             return True
         
         info = self.AVAILABLE_MODELS[model_file]
-        print(f"\n📥 Preparando download de: {info['name']}")
-        print(f"   Tamanho: {info['size']}")
-        print(f"\n⚠️  O modelo será baixado automaticamente pelo GPT4All na primeira execução.")
-        print(f"   Selecione este modelo no menu e execute uma consulta para iniciar o download.\n")
+        print(f"\n[SISTEMA] Preparando download de: {info['name']}")
+        print(f"          Tamanho: {info['size']}")
+        print(f"\n[AVISO] O modelo sera baixado automaticamente pelo GPT4All na primeira execucao.")
+        print(f"        Selecione este modelo no menu e execute uma consulta para iniciar o download.\n")
         
         return False

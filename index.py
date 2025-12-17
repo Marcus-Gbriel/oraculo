@@ -63,16 +63,16 @@ from modules.model_manager import ModelManager
 def print_banner():
     """Exibe o banner do sistema"""
     banner = """
-    ╔═══════════════════════════════════════════════════════════╗
-    ║                                                           ║
-    ║              🔮  SISTEMA ORÁCULO  🔮                      ║
-    ║                                                           ║
-    ║         Agente de IA Local para Consulta de              ║
-    ║              Documentos Empresariais                      ║
-    ║                                                           ║
-    ║                   Versão 1.0.0                            ║
-    ║                                                           ║
-    ╚═══════════════════════════════════════════════════════════╝
+    ===============================================================
+                                                                   
+                      SISTEMA ORACULO                            
+                                                                   
+              Agente de Inteligencia Artificial Local             
+                  para Consulta de Documentos                     
+                                                                   
+                         Versao 1.0.0                             
+                                                                   
+    ===============================================================
     """
     print(banner)
 
@@ -95,39 +95,39 @@ def check_dependencies():
             missing.append(package_name)
     
     if missing:
-        logger.error("Dependências faltando!")
-        print("\n❌ Dependências necessárias não instaladas:")
+        logger.error("Dependencias faltando!")
+        print("\n[ERRO] Dependencias necessarias nao instaladas:")
         for pkg in missing:
-            print(f"   • {pkg}")
-        print("\n📦 Instale com: pip install " + " ".join(missing))
+            print(f"   - {pkg}")
+        print("\n[INFO] Instale com: pip install " + " ".join(missing))
         return False
     
-    logger.info("✅ Todas as dependências estão instaladas")
+    logger.info("Todas as dependencias estao instaladas")
     return True
 
 
 def show_menu():
     """Exibe o menu principal"""
     menu = """
-    ═══════════════════════════════════════
-              MENU PRINCIPAL
-    ═══════════════════════════════════════
+    ===============================================================
+                        MENU PRINCIPAL
+    ===============================================================
     
-    📚 DOCUMENTOS:
-    1. Indexar documentos (primeira vez ou atualização)
-    2. Fazer pergunta ao Oráculo
-    3. Modo interativo (múltiplas perguntas)
-    4. Ver estatísticas do sistema
-    5. Reindexar documentos (limpar e recriar índice)
+    GERENCIAMENTO DE DOCUMENTOS:
+    [1] Indexar documentos (primeira vez ou atualizacao)
+    [2] Consultar sistema (pergunta unica)
+    [3] Modo interativo (multiplas consultas)
+    [4] Visualizar estatisticas do sistema
+    [5] Reindexar documentos (reconstruir indice)
     
-    🤖 MODELOS LLM:
-    6. Listar modelos disponíveis
-    7. Ver detalhes de um modelo
-    8. Selecionar modelo ativo
+    GERENCIAMENTO DE MODELOS:
+    [6] Listar modelos disponiveis
+    [7] Visualizar detalhes de modelo
+    [8] Selecionar modelo ativo
     
-    9. Sair
+    [9] Encerrar sistema
     
-    ═══════════════════════════════════════
+    ===============================================================
     """
     print(menu)
 
@@ -147,8 +147,8 @@ def main():
     
     # Verificar se a pasta de documentos existe
     if not Path(DOCUMENTS_PATH).exists():
-        logger.error(f"Pasta de documentos não encontrada: {DOCUMENTS_PATH}")
-        print(f"\n❌ Crie a pasta '{DOCUMENTS_PATH}' e adicione seus documentos!")
+        logger.error(f"Pasta de documentos nao encontrada: {DOCUMENTS_PATH}")
+        print(f"\n[ERRO] Crie a pasta '{DOCUMENTS_PATH}' e adicione seus documentos!")
         return 1
     
     try:
@@ -156,8 +156,8 @@ def main():
         model_manager = ModelManager()
         
         # Inicializar sistema
-        print("\n🔄 Inicializando Sistema Oráculo...")
-        print("   Detectando LLM disponível...")
+        print("\n[SISTEMA] Inicializando Sistema Oraculo...")
+        print("[SISTEMA] Detectando modelo LLM disponivel...")
         
         # Usar modelo selecionado
         selected_model = model_manager.get_selected_model()
@@ -172,67 +172,67 @@ def main():
         # Loop principal
         while True:
             show_menu()
-            choice = input("Escolha uma opção: ").strip()
+            choice = input("Escolha uma opcao: ").strip()
             
             if choice == '1':
-                print("\n📚 Indexando documentos...")
+                print("\n[SISTEMA] Indexando documentos...")
                 oracle.index_documents(force_reindex=False)
-                input("\n✅ Pressione Enter para continuar...")
+                input("\n[INFO] Pressione Enter para continuar...")
                 
             elif choice == '2':
-                question = input("\n🔮 Sua pergunta: ").strip()
+                question = input("\n[CONSULTA] Digite sua pergunta: ").strip()
                 if question:
-                    print("\n💭 Processando...\n")
+                    print("\n[SISTEMA] Processando consulta...\n")
                     response = oracle.query(question)
-                    print(f"💡 Resposta:\n{response}")
-                input("\n✅ Pressione Enter para continuar...")
+                    print(f"[RESPOSTA]\n{response}")
+                input("\n[INFO] Pressione Enter para continuar...")
                 
             elif choice == '3':
                 oracle.interactive_mode()
                 
             elif choice == '4':
                 stats = oracle.get_stats()
-                print("\n📊 Estatísticas do Sistema:")
-                print(f"   • Total de chunks indexados: {stats.get('total_documents', 0)}")
-                print(f"   • Coleção: {stats.get('collection_name', 'N/A')}")
-                input("\n✅ Pressione Enter para continuar...")
+                print("\n[ESTATISTICAS] Informacoes do Sistema:")
+                print(f"   - Total de chunks indexados: {stats.get('total_documents', 0)}")
+                print(f"   - Colecao: {stats.get('collection_name', 'N/A')}")
+                input("\n[INFO] Pressione Enter para continuar...")
                 
             elif choice == '5':
-                confirm = input("\n⚠️  Tem certeza que deseja reindexar todos os documentos? (s/n): ")
+                confirm = input("\n[ATENCAO] Tem certeza que deseja reindexar todos os documentos? (s/n): ")
                 if confirm.lower() == 's':
-                    print("\n🔄 Reindexando documentos...")
+                    print("\n[SISTEMA] Reindexando documentos...")
                     oracle.index_documents(force_reindex=True)
-                input("\n✅ Pressione Enter para continuar...")
+                input("\n[INFO] Pressione Enter para continuar...")
             
             elif choice == '6':
                 # Listar modelos disponíveis
                 model_manager.print_all_models()
-                input("\n✅ Pressione Enter para continuar...")
+                input("\n[INFO] Pressione Enter para continuar...")
             
             elif choice == '7':
                 # Ver detalhes de um modelo
                 model_manager.print_all_models()
-                model_idx = input("\n📦 Digite o número do modelo para ver detalhes (ou Enter para voltar): ").strip()
+                model_idx = input("\n[MODELO] Digite o numero do modelo para ver detalhes (ou Enter para voltar): ").strip()
                 if model_idx.isdigit():
                     idx = int(model_idx) - 1
                     models = list(model_manager.AVAILABLE_MODELS.keys())
                     if 0 <= idx < len(models):
                         model_manager.print_model_info(models[idx])
                     else:
-                        print("❌ Número inválido!")
-                input("\n✅ Pressione Enter para continuar...")
+                        print("[ERRO] Numero invalido!")
+                input("\n[INFO] Pressione Enter para continuar...")
             
             elif choice == '8':
                 # Selecionar modelo ativo
                 installed = model_manager.get_installed_models()
                 
                 if not installed:
-                    print("\n❌ Nenhum modelo instalado!")
-                    print("💡 Dica: O modelo será baixado automaticamente na primeira execução.")
-                    print("   Selecione um modelo abaixo e execute uma consulta.\n")
+                    print("\n[AVISO] Nenhum modelo instalado!")
+                    print("[INFO] O modelo sera baixado automaticamente na primeira execucao.")
+                    print("       Selecione um modelo abaixo e execute uma consulta.\n")
                 
                 model_manager.print_all_models()
-                model_idx = input("\n⭐ Digite o número do modelo para ativar (ou Enter para voltar): ").strip()
+                model_idx = input("\n[MODELO] Digite o numero do modelo para ativar (ou Enter para voltar): ").strip()
                 
                 if model_idx.isdigit():
                     idx = int(model_idx) - 1
@@ -241,29 +241,29 @@ def main():
                         selected = models[idx]
                         try:
                             model_manager.set_selected_model(selected)
-                            print(f"\n✅ Modelo '{model_manager.AVAILABLE_MODELS[selected]['name']}' selecionado!")
-                            print("⚠️  Reinicie o sistema para aplicar a mudança.")
+                            print(f"\n[SUCESSO] Modelo '{model_manager.AVAILABLE_MODELS[selected]['name']}' selecionado!")
+                            print("[AVISO] Reinicie o sistema para aplicar a mudanca.")
                         except ValueError as e:
-                            print(f"\n⚠️  {str(e)}")
-                            print("💡 O modelo será baixado na primeira execução após reiniciar.")
+                            print(f"\n[AVISO] {str(e)}")
+                            print("[INFO] O modelo sera baixado na primeira execucao apos reiniciar.")
                     else:
-                        print("❌ Número inválido!")
-                input("\n✅ Pressione Enter para continuar...")
+                        print("[ERRO] Numero invalido!")
+                input("\n[INFO] Pressione Enter para continuar...")
                 
             elif choice == '9':
-                print("\n👋 Encerrando Sistema Oráculo. Até logo!")
+                print("\n[SISTEMA] Encerrando Sistema Oraculo. Ate logo!")
                 break
                 
             else:
-                print("\n❌ Opção inválida! Tente novamente.")
-                input("Pressione Enter para continuar...")
+                print("\n[ERRO] Opcao invalida! Tente novamente.")
+                input("[INFO] Pressione Enter para continuar...")
     
     except KeyboardInterrupt:
-        print("\n\n👋 Sistema interrompido. Até logo!")
+        print("\n\n[SISTEMA] Sistema interrompido. Ate logo!")
         return 0
     except Exception as e:
         logger.error(f"Erro fatal: {str(e)}", exc_info=True)
-        print(f"\n❌ Erro fatal: {str(e)}")
+        print(f"\n[ERRO FATAL] {str(e)}")
         return 1
     
     return 0
