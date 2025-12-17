@@ -20,26 +20,26 @@ O Sistema Oráculo é uma solução completa de IA que funciona totalmente offli
 
 ```
 oraculo/
-├── index.py                    # Ponto de entrada único do sistema
-├── config.json                 # Configurações persistentes (modelo ativo, etc)
-├── BENCHMARK-PERGUNTAS.md      # Perguntas para testar precisão do sistema
-├── training/                   # Documentos para indexação
+├── index.py                        # Ponto de entrada único do sistema
+├── config.json                     # Configurações persistentes (modelo ativo, etc)
+├── BENCHMARK-PERGUNTAS.md          # Perguntas para testar precisão do sistema
+├── training/                       # Documentos para indexação
 │   └── desenvolvimento_seguro.pdf
-├── logs/                       # Logs organizados por data
+├── logs/                           # Logs organizados por data
 │   └── oraculo_YYYYMMDD.log
-├── modules/                    # Módulos do sistema
+├── modules/                        # Módulos do sistema
 │   ├── __init__.py
-│   ├── document_loader.py     # Carregamento de documentos
-│   ├── text_processor.py      # Processamento e chunking
-│   ├── embedding_generator.py # Geração de embeddings
-│   ├── vector_store.py        # Armazenamento vetorial
-│   ├── llm.py                 # Modelos de linguagem (GPT4All, etc)
-│   ├── model_manager.py       # Gerenciamento de modelos LLM
-│   └── oracle_system.py       # Sistema principal RAG
-├── src/                        # Recursos do sistema
-│   ├── models/                # Modelos de IA (GPT4All)
-│   └── vectorstore/           # Banco de vetores persistente
-└── docs/                       # Documentação
+│   ├── document_loader.py          # Carregamento de documentos
+│   ├── text_processor.py           # Processamento e chunking
+│   ├── embedding_generator.py      # Geração de embeddings
+│   ├── vector_store.py             # Armazenamento vetorial
+│   ├── llm.py                      # Modelos de linguagem (GPT4All, etc)
+│   ├── model_manager.py            # Gerenciamento de modelos LLM
+│   └── oracle_system.py            # Sistema principal RAG
+├── src/                            # Recursos do sistema
+│   ├── models/                     # Modelos de IA (GPT4All)
+│   └── vectorstore/                # Banco de vetores persistente
+└── docs/                           # Documentação
     ├── README.md
     ├── INSTALLATION.md
     ├── ARCHITECTURE.md
