@@ -1,0 +1,17 @@
+# Leitura de documentos
+PyPDF2>=3.0.0
+python-docx>=1.0.0
+openpyxl>=3.1.0
+
+# IA e Embeddings
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+
+# Vector Database - versão compatível com Python 3.14
+chromadb>=0.5.0
+
+# LLM Local - GPT4All (recomendado, 100% Python)
+gpt4all>=2.0.0
+
+# LLM Local alternativo (opcional - requer compilador C++)
+# llama-cpp-python>=0.2.0

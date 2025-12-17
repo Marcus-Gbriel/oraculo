@@ -1,0 +1,42 @@
+# Ignorar ambientes virtuais
+venv/
+env/
+ENV/
+.venv/
+
+# Ignorar cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Ignorar logs
+logs/
+*.log
+oraculo.log
+
+# Ignorar dados gerados
+src/vectorstore/
+training/
+src/models/*.gguf
+*.db
+*.sqlite
+config.json
+
+# Ignorar arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignorar IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignorar distribuição
+build/
+dist/
+*.egg-info/
