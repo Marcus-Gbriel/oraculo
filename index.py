@@ -53,7 +53,7 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 logger = logging.getLogger(__name__)
-logger.info(f"Sistema iniciado - Log: {log_filename}")
+logger.info(f"[SISTEMA] Iniciado - Log: {log_filename}")
 
 # Importar o sistema
 from modules.oracle_system import OracleSystem
@@ -95,14 +95,14 @@ def check_dependencies():
             missing.append(package_name)
     
     if missing:
-        logger.error("Dependencias faltando!")
+        logger.error("[ERRO] Dependencias faltando!")
         print("\n[ERRO] Dependencias necessarias nao instaladas:")
         for pkg in missing:
             print(f"   - {pkg}")
         print("\n[INFO] Instale com: pip install " + " ".join(missing))
         return False
     
-    logger.info("Todas as dependencias estao instaladas")
+    logger.info("[SISTEMA] Todas as dependencias instaladas")
     return True
 
 
@@ -138,7 +138,7 @@ def main():
     
     # Verificar dependências
     if not check_dependencies():
-        logger.error("Sistema não pode iniciar sem as dependências necessárias")
+        logger.error("[ERRO] Sistema nao pode iniciar sem dependencias")
         return 1
     
     # Configurações
@@ -147,7 +147,7 @@ def main():
     
     # Verificar se a pasta de documentos existe
     if not Path(DOCUMENTS_PATH).exists():
-        logger.error(f"Pasta de documentos nao encontrada: {DOCUMENTS_PATH}")
+        logger.error(f"[ERRO] Pasta de documentos nao encontrada: {DOCUMENTS_PATH}")
         print(f"\n[ERRO] Crie a pasta '{DOCUMENTS_PATH}' e adicione seus documentos!")
         return 1
     
@@ -262,7 +262,7 @@ def main():
         print("\n\n[SISTEMA] Sistema interrompido. Ate logo!")
         return 0
     except Exception as e:
-        logger.error(f"Erro fatal: {str(e)}", exc_info=True)
+        logger.error(f"[ERRO] Erro fatal: {str(e)}", exc_info=True)
         print(f"\n[ERRO FATAL] {str(e)}")
         return 1
     

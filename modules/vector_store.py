@@ -36,7 +36,7 @@ class VectorStore:
             import chromadb
             from chromadb.config import Settings
             
-            logger.info(f"Inicializando ChromaDB em: {self.persist_directory}")
+            logger.info(f"[VECTORSTORE] Inicializando ChromaDB em: {self.persist_directory}")
             
             # Criar diretório se não existir
             self.persist_directory.mkdir(parents=True, exist_ok=True)
@@ -56,9 +56,9 @@ class VectorStore:
                 metadata={"hnsw:space": "cosine"}
             )
             
-            logger.info(f"ChromaDB inicializado. Coleção: {self.collection_name}")
+            logger.info(f"[VECTORSTORE] ChromaDB inicializado. Colecao: {self.collection_name}")
         except Exception as e:
-            logger.error(f"Erro ao inicializar ChromaDB: {str(e)}")
+            logger.error(f"[ERRO] Erro ao inicializar ChromaDB: {str(e)}")
             raise
     
     def add_documents(self, chunks: List[Dict], embeddings: List[np.ndarray]):

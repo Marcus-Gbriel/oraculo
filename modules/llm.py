@@ -23,8 +23,8 @@ def detect_gpu():
         if torch.cuda.is_available():
             gpu_name = torch.cuda.get_device_name(0)
             gpu_count = torch.cuda.device_count()
-            logger.info(f"🎮 GPU Detectada: {gpu_name}")
-            logger.info(f"   Quantidade: {gpu_count}")
+            logger.info(f"[GPU] Detectada: {gpu_name}")
+            logger.info(f"[GPU] Quantidade: {gpu_count}")
             return True
     except ImportError:
         logger.debug("PyTorch não instalado, verificando alternativas...")
@@ -37,12 +37,12 @@ def detect_gpu():
                               text=True, 
                               timeout=2)
         if result.returncode == 0:
-            logger.info("🎮 GPU NVIDIA detectada via nvidia-smi")
+            logger.info("[GPU] GPU NVIDIA detectada via nvidia-smi")
             return True
     except (FileNotFoundError, subprocess.TimeoutExpired):
         pass
     
-    logger.info("💻 GPU não detectada, usando CPU")
+    logger.info("[CPU] GPU nao detectada, usando CPU")
     return False
 
 
@@ -83,7 +83,7 @@ class LocalLLM:
         try:
             from llama_cpp import Llama
             
-            logger.info(f"Carregando modelo LLM de: {self.model_path}")
+            logger.info(f"[LLM] Carregando modelo de: {self.model_path}")
             
             self.llm = Llama(
                 model_path=self.model_path,
@@ -92,14 +92,14 @@ class LocalLLM:
                 verbose=False
             )
             
-            logger.info("Modelo LLM carregado com sucesso")
+            logger.info("[LLM] Modelo carregado com sucesso")
         except FileNotFoundError:
-            logger.error(f"Arquivo do modelo não encontrado: {self.model_path}")
-            logger.info("INSTRUÇÕES: Baixe um modelo GGUF compatível (ex: Llama-2-7B)")
-            logger.info("Coloque o modelo na pasta src/models/")
+            logger.error(f"[ERRO] Arquivo do modelo nao encontrado: {self.model_path}")
+            logger.info("[INFO] Baixe um modelo GGUF compativel (ex: Llama-2-7B)")
+            logger.info("[INFO] Coloque o modelo na pasta src/models/")
             raise
         except Exception as e:
-            logger.error(f"Erro ao carregar modelo LLM: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar modelo LLM: {str(e)}")
             raise
     
     def generate(
@@ -138,7 +138,7 @@ class LocalLLM:
             
             return response['choices'][0]['text'].strip()
         except Exception as e:
-            logger.error(f"Erro ao gerar resposta: {str(e)}")
+            logger.error(f"[ERRO] Erro ao gerar resposta: {str(e)}")
             return "Desculpe, ocorreu um erro ao gerar a resposta."
     
     def create_prompt_with_context(
@@ -244,18 +244,18 @@ class GPT4AllLLM:
             import sys
             import contextlib
             
-            logger.info(f"Inicializando GPT4All: {self.model_name}")
-            logger.info(f"Pasta de modelos: {self.model_path}")
+            logger.info(f"[LLM] Inicializando GPT4All: {self.model_name}")
+            logger.info(f"[LLM] Pasta de modelos: {self.model_path}")
             
             # Configurar device baseado na detecção
             if self.use_gpu:
                 device = 'gpu'
-                logger.info(f"⚡ Aceleração GPU ATIVADA")
-                logger.info(f"   Threads CPU: {self.n_threads} (auxílio)")
+                logger.info("[GPU] Aceleracao GPU ativada")
+                logger.info(f"[GPU] Threads CPU auxiliares: {self.n_threads}")
             else:
                 device = 'cpu'
-                logger.info(f"💻 Modo CPU")
-                logger.info(f"   Threads: {self.n_threads}")
+                logger.info("[CPU] Modo CPU ativo")
+                logger.info(f"[CPU] Threads: {self.n_threads}")
             
             # GPT4All baixa automaticamente se não existir
             try:
@@ -271,14 +271,15 @@ class GPT4AllLLM:
                     )
                 
                 if self.use_gpu:
-                    logger.info(f"✅ Modelo carregado com GPU! (RTX 4070 Super detectada)")
+                    logger.info("[GPU] Modelo carregado com sucesso")
+                    logger.info("[GPU] Dispositivo GPU detectado e ativo")
                 else:
-                    logger.info(f"✅ Modelo carregado com CPU ({self.n_threads} threads)")
+                    logger.info(f"[CPU] Modelo carregado com sucesso ({self.n_threads} threads)")
                     
             except Exception as gpu_error:
                 if self.use_gpu:
-                    logger.warning(f"Falha ao carregar com GPU: {gpu_error}")
-                    logger.info("Tentando novamente com CPU...")
+                    logger.warning(f"[GPU] Falha ao carregar com GPU: {gpu_error}")
+                    logger.info("[CPU] Tentando fallback para CPU...")
                     # Fallback para CPU
                     with contextlib.redirect_stderr(open(os.devnull, 'w')):
                         self.model = GPT4All(
@@ -290,16 +291,16 @@ class GPT4AllLLM:
                             verbose=False
                         )
                     self.use_gpu = False
-                    logger.info(f"✅ Modelo carregado com CPU (fallback)")
+                    logger.info("[CPU] Modelo carregado com CPU (fallback)")
                 else:
                     raise
             
         except ImportError:
-            logger.error("GPT4All não está instalado!")
-            logger.info("Instale com: pip install gpt4all")
+            logger.error("[ERRO] GPT4All nao esta instalado")
+            logger.info("[INFO] Instale com: pip install gpt4all")
             raise
         except Exception as e:
-            logger.error(f"Erro ao carregar GPT4All: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar GPT4All: {str(e)}")
             raise
     
     def generate(
@@ -420,7 +421,7 @@ class SimpleLLM:
     """
     
     def __init__(self):
-        logger.warning("Usando SimpleLLM - apenas para testes. Respostas serão limitadas.")
+        logger.warning("[AVISO] Usando SimpleLLM - apenas para testes. Respostas serao limitadas.")
     
     def generate(self, prompt: str, **kwargs) -> str:
         """Gera resposta simples baseada no contexto"""

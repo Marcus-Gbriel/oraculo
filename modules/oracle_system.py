@@ -49,7 +49,7 @@ class OracleSystem:
         self.model_name = model_name
         
         # Inicializar componentes
-        logger.info("Inicializando Sistema Oráculo...")
+        logger.info("[SISTEMA] Inicializando Sistema Oraculo...")
         
         self.document_loader = DocumentLoader(documents_path)
         self.text_processor = TextProcessor(chunk_size=500, chunk_overlap=50)
@@ -58,44 +58,44 @@ class OracleSystem:
         
         # Inicializar LLM com prioridade: GPT4All > LocalLLM > SimpleLLM
         if use_simple_llm:
-            logger.warning("Usando SimpleLLM para testes.")
+            logger.warning("[AVISO] Usando SimpleLLM para testes")
             self.llm = SimpleLLM()
         elif use_gpt4all:
             try:
-                logger.info(f"Tentando inicializar GPT4All com modelo: {self.model_name}")
+                logger.info(f"[LLM] Tentando inicializar GPT4All com modelo: {self.model_name}")
                 self.llm = GPT4AllLLM(
                     model_name=self.model_name,
                     model_path="src/models",
                     max_tokens=300  # Respostas mais concisas e rápidas
                 )
-                logger.info("✅ GPT4All inicializado com sucesso!")
+                logger.info("[LLM] GPT4All inicializado com sucesso")
             except Exception as e:
-                logger.warning(f"GPT4All não disponível: {str(e)}")
-                logger.info("Tentando LocalLLM (llama-cpp-python)...")
+                logger.warning(f"[LLM] GPT4All nao disponivel: {str(e)}")
+                logger.info("[LLM] Tentando LocalLLM (llama-cpp-python)...")
                 if model_path and Path(model_path).exists():
                     try:
                         self.llm = LocalLLM(model_path)
-                        logger.info("✅ LocalLLM inicializado!")
+                        logger.info("[LLM] LocalLLM inicializado com sucesso")
                     except Exception as e2:
-                        logger.warning(f"LocalLLM falhou: {str(e2)}")
-                        logger.info("Usando SimpleLLM (modo teste)")
+                        logger.warning(f"[LLM] LocalLLM falhou: {str(e2)}")
+                        logger.info("[LLM] Usando SimpleLLM (modo teste)")
                         self.llm = SimpleLLM()
                 else:
-                    logger.info("Modelo GGUF não encontrado. Usando SimpleLLM (modo teste)")
+                    logger.info("[LLM] Modelo GGUF nao encontrado. Usando SimpleLLM (modo teste)")
                     self.llm = SimpleLLM()
         elif model_path and Path(model_path).exists():
             try:
-                logger.info("Usando LocalLLM com modelo GGUF...")
+                logger.info("[LLM] Usando LocalLLM com modelo GGUF...")
                 self.llm = LocalLLM(model_path)
             except Exception as e:
-                logger.warning(f"LocalLLM falhou: {str(e)}")
-                logger.info("Usando SimpleLLM (modo teste)")
+                logger.warning(f"[LLM] LocalLLM falhou: {str(e)}")
+                logger.info("[LLM] Usando SimpleLLM (modo teste)")
                 self.llm = SimpleLLM()
         else:
-            logger.warning("Nenhum modelo configurado. Usando SimpleLLM para testes.")
+            logger.warning("[AVISO] Nenhum modelo configurado. Usando SimpleLLM para testes")
             self.llm = SimpleLLM()
         
-        logger.info("Sistema Oráculo inicializado com sucesso!")
+        logger.info("[SISTEMA] Sistema Oraculo inicializado com sucesso!")
     
     def index_documents(self, force_reindex: bool = False):
         """
@@ -105,47 +105,47 @@ class OracleSystem:
             force_reindex: Se True, limpa o índice existente e reindexа
         """
         logger.info("\n" + "="*50)
-        logger.info("INDEXANDO DOCUMENTOS")
+        logger.info("[INDEXACAO] Iniciando indexacao de documentos")
         logger.info("="*50)
         
         # Verificar se já existem documentos
         stats = self.vector_store.get_collection_stats()
         if stats.get('total_documents', 0) > 0 and not force_reindex:
-            logger.info(f"Já existem {stats['total_documents']} documentos indexados.")
-            logger.info("Use force_reindex=True para reindexar.")
+            logger.info(f"[INDEXACAO] Ja existem {stats['total_documents']} documentos indexados")
+            logger.info("[INDEXACAO] Use force_reindex=True para reindexar")
             return
         
         if force_reindex:
-            logger.info("Limpando índice existente...")
+            logger.info("[INDEXACAO] Limpando indice existente...")
             self.vector_store.clear_collection()
         
         # Carregar documentos
-        logger.info("\n1. Carregando documentos...")
+        logger.info("\n[INDEXACAO] 1. Carregando documentos...")
         documents = self.document_loader.load_all_documents()
         
         if not documents:
-            logger.error("Nenhum documento encontrado para indexar!")
+            logger.error("[ERRO] Nenhum documento encontrado para indexar!")
             return
         
         # Processar em chunks
-        logger.info("\n2. Processando e dividindo em chunks...")
+        logger.info("\n[INDEXACAO] 2. Processando e dividindo em chunks...")
         chunks = self.text_processor.process_documents(documents)
         
         # Gerar embeddings
-        logger.info("\n3. Gerando embeddings...")
+        logger.info("\n[INDEXACAO] 3. Gerando embeddings...")
         texts = [chunk['text'] for chunk in chunks]
         embeddings = self.embedding_generator.generate_embeddings_batch(texts)
         
         # Adicionar ao vector store
-        logger.info("\n4. Adicionando ao vector store...")
+        logger.info("\n[INDEXACAO] 4. Adicionando ao vector store...")
         self.vector_store.add_documents(chunks, embeddings)
         
         # Estatísticas finais
         final_stats = self.vector_store.get_collection_stats()
         logger.info("\n" + "="*50)
-        logger.info("INDEXAÇÃO CONCLUÍDA")
-        logger.info(f"Total de documentos: {len(documents)}")
-        logger.info(f"Total de chunks: {final_stats.get('total_documents', 0)}")
+        logger.info("[INDEXACAO] CONCLUIDA")
+        logger.info(f"[INDEXACAO] Total de documentos: {len(documents)}")
+        logger.info(f"[INDEXACAO] Total de chunks: {final_stats.get('total_documents', 0)}")
         logger.info("="*50 + "\n")
     
     def query(self, question: str, n_results: int = 5, show_sources: bool = True) -> str:
@@ -160,7 +160,7 @@ class OracleSystem:
         Returns:
             Resposta gerada
         """
-        logger.info(f"\nProcessando pergunta: {question}")
+        logger.info(f"\n[CONSULTA] Processando pergunta: {question}")
         
         # Verificar se há documentos indexados
         stats = self.vector_store.get_collection_stats()
@@ -171,7 +171,7 @@ class OracleSystem:
         print("[SISTEMA] Buscando informacoes relevantes...", end='', flush=True)
         
         # Gerar embedding da pergunta
-        logger.info("Buscando documentos relevantes...")
+        logger.info("[CONSULTA] Buscando documentos relevantes...")
         question_embedding = self.embedding_generator.generate_embedding(question)
         
         # Buscar documentos relevantes
@@ -188,13 +188,13 @@ class OracleSystem:
         prompt = self.llm.create_prompt_with_context(question, relevant_docs)
         
         # Gerar resposta
-        logger.info("Gerando resposta...")
+        logger.info("[CONSULTA] Gerando resposta...")
         response = self.llm.generate(prompt)
         
         print("\r" + " "*50 + "\r", end='')  # Limpar linha de processamento
         
         # Log da resposta gerada (sem fontes)
-        logger.info(f"Resposta gerada: {response[:200]}{'...' if len(response) > 200 else ''}")
+        logger.info(f"[CONSULTA] Resposta gerada: {response[:200]}{'...' if len(response) > 200 else ''}")
         
         # Adicionar fontes se solicitado
         if show_sources:
@@ -209,8 +209,8 @@ class OracleSystem:
         
         # Log completo da interação
         logger.info(f"\n{'='*60}")
-        logger.info(f"PERGUNTA: {question}")
-        logger.info(f"RESPOSTA COMPLETA: {response}")
+        logger.info(f"[INTERACAO] PERGUNTA: {question}")
+        logger.info(f"[INTERACAO] RESPOSTA COMPLETA: {response}")
         logger.info(f"{'='*60}\n")
         
         return response
@@ -220,9 +220,9 @@ class OracleSystem:
         Modo interativo de perguntas e respostas
         """
         logger.info("\n" + "="*50)
-        logger.info("MODO INTERATIVO DO ORACULO")
+        logger.info("[SISTEMA] Modo interativo iniciado")
         logger.info("="*50)
-        logger.info("Digite suas perguntas (ou 'sair' para encerrar)\n")
+        logger.info("[SISTEMA] Digite suas perguntas (ou 'sair' para encerrar)\n")
         
         print("\n" + "="*63)
         print("               MODO INTERATIVO - SISTEMA ORACULO")
@@ -235,7 +235,7 @@ class OracleSystem:
                 question = input("\n[CONSULTA] Sua pergunta: ").strip()
                 
                 if question.lower() in ['sair', 'exit', 'quit', 'q']:
-                    logger.info("\nEncerrando Oraculo. Ate logo!")
+                    logger.info("\n[SISTEMA] Encerrando Oraculo. Ate logo!")
                     print("\n[SISTEMA] Encerrando modo interativo. Ate logo!\n")
                     break
                 
@@ -245,17 +245,17 @@ class OracleSystem:
                 # Timestamp da pergunta
                 from datetime import datetime
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"\n[{timestamp}] Nova pergunta recebida")
+                logger.info(f"\n[CONSULTA] [{timestamp}] Nova pergunta recebida")
                 
                 response = self.query(question)
                 print(f"\n[RESPOSTA]\n{response}")
                 
             except KeyboardInterrupt:
-                logger.info("\n\nEncerrando Oraculo. Ate logo!")
+                logger.info("\n\n[SISTEMA] Encerrando Oraculo. Ate logo!")
                 print("\n[SISTEMA] Sistema interrompido.\n")
                 break
             except Exception as e:
-                logger.error(f"Erro: {str(e)}")
+                logger.error(f"[ERRO] {str(e)}")
                 print(f"[ERRO] {str(e)}")
     
     def get_stats(self) -> Dict:

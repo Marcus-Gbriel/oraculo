@@ -45,10 +45,10 @@ class DocumentLoader:
                 for page in pdf_reader.pages:
                     text += page.extract_text() + "\n"
             
-            logger.info(f"PDF carregado com sucesso: {file_path.name}")
+            logger.info(f"[PDF] Carregado com sucesso: {file_path.name}")
             return text
         except Exception as e:
-            logger.error(f"Erro ao carregar PDF {file_path.name}: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar PDF {file_path.name}: {str(e)}")
             return ""
     
     def load_docx(self, file_path: Path) -> str:
@@ -67,10 +67,10 @@ class DocumentLoader:
             doc = Document(file_path)
             text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
             
-            logger.info(f"DOCX carregado com sucesso: {file_path.name}")
+            logger.info(f"[DOCX] Carregado com sucesso: {file_path.name}")
             return text
         except Exception as e:
-            logger.error(f"Erro ao carregar DOCX {file_path.name}: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar DOCX {file_path.name}: {str(e)}")
             return ""
     
     def load_excel(self, file_path: Path) -> str:
@@ -98,10 +98,10 @@ class DocumentLoader:
                     if row_text.strip():
                         text += row_text + "\n"
             
-            logger.info(f"Excel carregado com sucesso: {file_path.name}")
+            logger.info(f"[EXCEL] Carregado com sucesso: {file_path.name}")
             return text
         except Exception as e:
-            logger.error(f"Erro ao carregar Excel {file_path.name}: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar Excel {file_path.name}: {str(e)}")
             return ""
     
     def load_all_documents(self) -> List[Dict[str, str]]:
@@ -114,7 +114,7 @@ class DocumentLoader:
         documents = []
         
         if not self.documents_path.exists():
-            logger.error(f"Pasta não encontrada: {self.documents_path}")
+            logger.error(f"[ERRO] Pasta nao encontrada: {self.documents_path}")
             return documents
         
         for file_path in self.documents_path.iterdir():
@@ -134,7 +134,7 @@ class DocumentLoader:
                         'content': content,
                         'path': str(file_path)
                     })
-                    logger.info(f"Documento processado: {file_path.name} ({len(content)} caracteres)")
+                    logger.info(f"[DOCUMENTO] Processado: {file_path.name} ({len(content)} caracteres)")
         
-        logger.info(f"Total de documentos carregados: {len(documents)}")
+        logger.info(f"[DOCUMENTO] Total carregado: {len(documents)} documentos")
         return documents

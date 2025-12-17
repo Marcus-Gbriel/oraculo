@@ -95,7 +95,7 @@ class ModelManager:
                 with open(self.config_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception as e:
-                logger.warning(f"Erro ao carregar config: {e}")
+                logger.warning(f"[AVISO] Erro ao carregar config: {e}")
         
         # Configuração padrão
         return {
@@ -109,9 +109,9 @@ class ModelManager:
         try:
             with open(self.config_file, 'w', encoding='utf-8') as f:
                 json.dump(self.config, indent=2, fp=f, ensure_ascii=False)
-            logger.info(f"Configuração salva em {self.config_file}")
+            logger.info(f"[CONFIG] Configuracao salva em {self.config_file}")
         except Exception as e:
-            logger.error(f"Erro ao salvar config: {e}")
+            logger.error(f"[ERRO] Erro ao salvar config: {e}")
     
     def get_installed_models(self) -> List[str]:
         """Retorna lista de modelos instalados"""
@@ -140,7 +140,7 @@ class ModelManager:
         
         self.config["selected_model"] = model_name
         self._save_config()
-        logger.info(f"Modelo selecionado: {model_name}")
+        logger.info(f"[CONFIG] Modelo selecionado: {model_name}")
     
     def list_available_models(self) -> Dict:
         """Retorna dicionário de modelos disponíveis"""

@@ -35,11 +35,11 @@ class EmbeddingGenerator:
         try:
             from sentence_transformers import SentenceTransformer
             
-            logger.info(f"Carregando modelo de embeddings: {self.model_name}")
+            logger.info(f"[EMBEDDING] Carregando modelo: {self.model_name}")
             self.model = SentenceTransformer(self.model_name)
-            logger.info("Modelo de embeddings carregado com sucesso")
+            logger.info("[EMBEDDING] Modelo carregado com sucesso")
         except Exception as e:
-            logger.error(f"Erro ao carregar modelo de embeddings: {str(e)}")
+            logger.error(f"[ERRO] Erro ao carregar modelo de embeddings: {str(e)}")
             raise
     
     def generate_embedding(self, text: str) -> np.ndarray:
@@ -56,7 +56,7 @@ class EmbeddingGenerator:
             embedding = self.model.encode(text, convert_to_numpy=True)
             return embedding
         except Exception as e:
-            logger.error(f"Erro ao gerar embedding: {str(e)}")
+            logger.error(f"[ERRO] Erro ao gerar embedding: {str(e)}")
             return np.array([])
     
     def generate_embeddings_batch(self, texts: List[str], batch_size: int = 32) -> List[np.ndarray]:
@@ -71,15 +71,15 @@ class EmbeddingGenerator:
             Lista de embeddings
         """
         try:
-            logger.info(f"Gerando embeddings para {len(texts)} textos...")
+            logger.info(f"[EMBEDDING] Gerando embeddings para {len(texts)} textos...")
             embeddings = self.model.encode(
                 texts, 
                 batch_size=batch_size,
                 show_progress_bar=True,
                 convert_to_numpy=True
             )
-            logger.info("Embeddings gerados com sucesso")
+            logger.info("[EMBEDDING] Embeddings gerados com sucesso")
             return embeddings
         except Exception as e:
-            logger.error(f"Erro ao gerar embeddings em batch: {str(e)}")
+            logger.error(f"[ERRO] Erro ao gerar embeddings em batch: {str(e)}")
             return []

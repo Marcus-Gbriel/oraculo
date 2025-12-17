@@ -106,7 +106,7 @@ class TextProcessor:
             if start >= len(text):
                 break
         
-        logger.info(f"Texto dividido em {len(chunks)} chunks")
+        logger.info(f"[TEXT] Texto dividido em {len(chunks)} chunks")
         return chunks
     
     def process_documents(self, documents: List[Dict[str, str]]) -> List[Dict[str, any]]:
@@ -130,5 +130,5 @@ class TextProcessor:
             chunks = self.create_chunks(doc['content'], metadata)
             all_chunks.extend(chunks)
         
-        logger.info(f"Total de chunks criados: {len(all_chunks)}")
+        logger.info(f"[TEXT] Total de chunks criados: {len(all_chunks)}")
         return all_chunks
